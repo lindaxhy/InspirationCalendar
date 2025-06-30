@@ -7,11 +7,14 @@
 #include <QDebug>
 #include <QtSql/QSqlQuery>  //执行sql语句
 #include <QtSql/QSqlDatabase>  //数据库驱动
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 
 //创建数据库
 //遍历数据库
 //增删改查
 //QSqlDatabase db;
+/*
 cal_login::cal_login(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::cal_login)
@@ -42,6 +45,74 @@ cal_login::cal_login(QWidget *parent)
     else
     {
         qDebug()<<"userInfo存在";
+    }
+}*/
+cal_login::cal_login(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::cal_login)
+{
+    ui->setupUi(this);
+    ui->btn_login->setMinimumHeight(36);  // 设置按钮最小高度
+    ui->btn_login->setFont(QFont("Microsoft YaHei", 24));  // 设置字体和字号
+
+    this->setWindowTitle("用户登入");
+    this->setFixedSize(360, 280);
+    ui->le_password->setEchoMode(QLineEdit::Password);
+    initStyle();       // 初始化样式
+    initDatabase();    // 初始化数据库
+}
+
+// 设置界面样式（简约蓝色风格）
+void cal_login::initStyle()
+{
+    this->setStyleSheet(R"(
+        QWidget {
+            background-color: #f0f6ff;
+            font-family: "Segoe UI", "Microsoft YaHei";
+            font-size: 14px;
+        }
+        QLineEdit {
+            border: 1px solid #87cefa;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: white;
+        }
+        QLineEdit:focus {
+            border: 1px solid #1e90ff;
+        }
+        QPushButton {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            padding: 8px 12px;
+        }
+        QPushButton:hover {
+            background-color: #4682b4;
+        }
+    )");
+}
+
+// 初始化数据库，创建并填充userInfo表
+void cal_login::initDatabase()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("user.db");
+
+    if (!db.open()) {
+        QMessageBox::warning(this, "错误", "数据库创建失败");
+        return;
+    }
+
+    QSqlQuery query;
+    QString sql = "SELECT * FROM userInfo";
+    if (!query.exec(sql)) {
+        qDebug() << "userInfo不存在，开始创建表和初始化数据";
+        query.exec("CREATE TABLE userInfo(username VARCHAR(20), password VARCHAR(20))");
+        query.exec("INSERT INTO userInfo (username, password) VALUES ('zhangsan', '123456')");
+    } else {
+        qDebug() << "userInfo表已存在";
     }
 }
 

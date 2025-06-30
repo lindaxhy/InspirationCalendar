@@ -26,6 +26,8 @@ private slots:
 
 private:
     Ui::cal_login *ui;
+    void initStyle();
+    void initDatabase();
 };
 
 #endif // CAL_LOGIN_H
